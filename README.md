@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CWG Wildlife Activity Logger
 
-## Getting Started
+A Next.js application for capturing daily wildlife control activities and exporting monthly reports. The project uses Supabase as the primary PostgreSQL database and authentication provider.
 
-First, run the development server:
+## Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- [Node.js](https://nodejs.org/) 20+
+- [pnpm](https://pnpm.io/) 9+
+- A [Supabase](https://supabase.com/) account (free tier is sufficient)
+
+## Setup
+
+1. **Install dependencies**
+
+   ```bash
+   pnpm install
+   ```
+
+2. **Provision Supabase**
+   - Create a new project from the Supabase dashboard.
+   - Note the **Project URL**, **anon public key**, and **service role key** from the project settings.
+   - Configure a `wildlife_activity` schema or table via the Supabase SQL editor when you're ready to model domain data.
+
+3. **Configure environment variables**
+   - Copy the example file and fill in your credentials:
+
+     ```bash
+     cp .env.example .env.local
+     ```
+
+   - Edit `.env.local` and replace the placeholder values with the keys from step 2.
+
+4. **Run the development server**
+
+   ```bash
+   pnpm dev
+   ```
+
+   The application will be available at [http://localhost:3000](http://localhost:3000).
+
+## Project Structure
+
+```
+app/             # Next.js App Router entry points and global styles
+lib/supabase/    # Supabase client helpers
+public/          # Static assets
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Supabase Usage
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `lib/supabase/client.ts` exposes `getSupabaseBrowserClient`, which memoises a Supabase browser client configured with the public keys.
+- Server-side utilities that require elevated permissions (for migrations or cron-style jobs) can import the service role key from `process.env.SUPABASE_SERVICE_ROLE_KEY`.
+- Keep service role functionality in API routes or server actions; never expose it in the browser bundle.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+- `pnpm dev` – start the Next.js development server
+- `pnpm build` – create a production build
+- `pnpm start` – serve the production build
+- `pnpm lint` – run ESLint across the codebase
 
-To learn more about Next.js, take a look at the following resources:
+## Next Steps
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Model wildlife activity tables and Supabase policies for row-level security.
+- Integrate Supabase auth helpers for Next.js to handle member sessions.
+- Implement daily activity forms and monthly report exports.
